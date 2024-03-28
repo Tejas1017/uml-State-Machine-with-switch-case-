@@ -61,15 +61,16 @@ void loop() {
     case '3':
       ee = resetCount;
       break;
-    case 'o':
+    case '4':
       ee =countVariable;
+      break;
     default:
       // If no valid input received, do nothing
       return;
   }
 
   eventDispatch();
-  Serial.println(c.count);
+  //rial.println(c.count);
 }
 
 void eventDispatch() {
@@ -135,7 +136,7 @@ event_status_t idlerHandler() {
 event_status_t incHandler() {
   switch (ee) {
     case ENTRY:
-      Serial.println("1) to increment count 2) decrement count 3) reset count\nYou are in increment state");
+      Serial.println("You are in increment state");
       return eventHandled;
     case EXIT:
       return eventHandled;
@@ -145,10 +146,11 @@ event_status_t incHandler() {
       c.count++;
       return eventHandled;
     case decCount:
-      Serial.println("Decrementing count");
+      Serial.println("Decrementing inc count");
       if (c.count > 0) {
         c.count--;
-        return eventHandled;
+        c.activeState=decPress;
+        return eventTransition;
       } else {
         // If count is already 0, decrement is not allowed
         Serial.println("Count is already 0, decrement not allowed");
@@ -156,7 +158,7 @@ event_status_t incHandler() {
       }
     case resetCount:
       // Resetting count and transitioning back to idle state
-      Serial.println("Resetting count");
+      Serial.println("Resetting inc count");
       c.count = 0;
       c.activeState = idle;
       return eventTransition;
@@ -172,12 +174,12 @@ event_status_t incHandler() {
 event_status_t decHandler() {
   switch (ee) {
     case ENTRY:
-      Serial.println("1) to increment count 2) decrement count 3) reset count\nYou are in decrement state");
+      Serial.println("You are in decrement state");
       return eventHandled;
     case EXIT:
       return eventHandled;
     case incCount:
-      Serial.println("Incrementing in dec count");
+      Serial.println("Incrementing in dec state");
       c.count++;
       c.activeState=incPress;
       return eventTransition;
@@ -208,20 +210,21 @@ event_status_t decHandler() {
 event_status_t stateHandler(){
     switch (ee) {
     case ENTRY:
-      Serial.println("blah blah");
-      Serial.println(c.count);
+      Serial.println("vishaka ");
+   // Serial.println(c.count);
       return eventHandled;
     case EXIT:
       return eventHandled;
     case incCount:
       Serial.println("Incrementing count");
       c.count++;
+      c.activeState=incPress;
       return eventTransition;
     case decCount:
       Serial.println("Decrementing count");
       if (c.count > 0) {
         c.count--;
-        
+        c.activeState=decPress;
         return eventTransition;
       } else {
         
@@ -234,8 +237,11 @@ event_status_t stateHandler(){
       c.count = 0;
       c.activeState = idle;
       return eventTransition;
-   
+   case countVariable:
+    Serial.println(c.count);
+    return eventHandled;
     default:
       return eventIgnored;
   }
 }
+
